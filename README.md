@@ -1,70 +1,133 @@
-# Getting Started with Create React App
+# Romulo Shop
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Romulo Shop é uma aplicação de e-commerce simples construída com React e Supabase. Ela permite que usuários se cadastrem, façam login, visualizem produtos cadastrados no banco de dados, adicionem itens ao carrinho e mantenham o carrinho persistente por usuário.
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## Funcionalidades
 
-### `npm start`
+- **Autenticação de Usuário:** Cadastro, login e logout usando Supabase Auth.
+- **Exibição de Produtos:** Produtos são carregados dinamicamente da tabela `produtos` no Supabase.
+- **Carrinho Persistente:** O carrinho de compras é salvo no banco de dados, vinculado ao usuário logado.
+- **Modal de Login e Carrinho:** Interface amigável para login/cadastro e visualização do carrinho.
+- **Logout:** Usuário pode sair da conta, limpando o carrinho local.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+---
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Tecnologias Utilizadas
 
-### `npm test`
+- [React](https://react.dev/)
+- [Supabase](https://supabase.com/) (Auth, Database)
+- [JavaScript (ES6+)](https://developer.mozilla.org/pt-BR/docs/Web/JavaScript)
+- [CSS](https://developer.mozilla.org/pt-BR/docs/Web/CSS)
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+---
 
-### `npm run build`
+## Instalação
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+1. **Clone o repositório:**
+   ```bash
+   git clone https://github.com/seu-usuario/romulo-shop.git
+   cd romulo-shop
+   ```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+2. **Instale as dependências:**
+   ```bash
+   npm install
+   ```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+3. **Configure o Supabase:**
+   - Crie um projeto no [Supabase](https://app.supabase.com/).
+   - No painel do Supabase, crie as tabelas usando os comandos SQL abaixo.
 
-### `npm run eject`
+4. **Crie o arquivo de configuração do Supabase:**
+   Crie o arquivo `src/supabaseClient.js`:
+   ```javascript
+   import { createClient } from '@supabase/supabase-js';
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+   const supabaseUrl = 'SUA_SUPABASE_URL';
+   const supabaseKey = 'SUA_SUPABASE_ANON_KEY';
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+   export const supabase = createClient(supabaseUrl, supabaseKey);
+   ```
+   Substitua `SUA_SUPABASE_URL` e `SUA_SUPABASE_ANON_KEY` pelos valores do seu projeto.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+---
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## Configuração do Banco de Dados (Supabase)
 
-## Learn More
+### Tabela de Produtos
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+```sql
+create table produtos (
+  id serial primary key,
+  nome text not null,
+  preco numeric(10,2) not null
+);
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### Tabela de Carrinhos
 
-### Code Splitting
+```sql
+create table carrinhos (
+  user_id uuid primary key references auth.users(id) on delete cascade,
+  itens jsonb
+);
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+### Inserir Produtos de Exemplo
 
-### Analyzing the Bundle Size
+```sql
+insert into produtos (nome, preco) values
+('Camisa Gabriel Shop', 59.90),
+('Boné Estiloso', 39.90),
+('Tênis Urbano', 129.90);
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+---
 
-### Making a Progressive Web App
+## Scripts
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+- **Iniciar o projeto:**
+  ```bash
+  npm start
+  ```
 
-### Advanced Configuration
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+## Estrutura dos Principais Arquivos
 
-### Deployment
+```
+src/
+├── App.js                # Componente principal, gerencia autenticação, produtos e carrinho
+├── supabaseClient.js     # Configuração do Supabase
+└── components/
+    ├── HeroSection.js
+    ├── LoginModal.js
+    ├── ProductList.js
+    └── CarrinhoModal.js
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+---
 
-### `npm run build` fails to minify
+## Como Usar
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+1. **Cadastro/Login:** Clique em "Login" no topo da página para abrir o modal de autenticação.
+2. **Visualizar Produtos:** Os produtos cadastrados no Supabase aparecem automaticamente.
+3. **Adicionar ao Carrinho:** Clique em "Adicionar ao Carrinho" em qualquer produto.
+4. **Ver Carrinho:** Clique em "Ver Carrinho" no topo para abrir o modal do carrinho.
+5. **Logout:** Clique em "Logout" para sair da conta.
+
+---
+
+## Observações
+
+- O carrinho é salvo no banco de dados apenas para usuários autenticados.
+- O projeto utiliza autenticação por email e senha do Supabase.
+- Para produção, configure regras de segurança adequadas no Supabase.
+
+---
+
+## Licença
+
+Este projeto é
